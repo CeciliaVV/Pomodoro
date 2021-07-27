@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int min_5 = 300; //duración del tiempo de descanso
   int _start = 1500; //tiempo inicial que va a estar disminuyendo cada segundo
 
-  int initial_time = 1500; //tiempo inicial
+  int initialTime = 1500; //tiempo inicial
 
   //BOTONES -> 1:botón presionado, 0:botón sin presionar
   int paused = 1; //botón "Pausa"
@@ -60,20 +60,31 @@ class _MyHomePageState extends State<MyHomePage> {
   //0 mientras transcurra el tiempo de pomodoro y 1 mientras transcurra el tiempo de descanso
   int bandera = 0;
 
+  //variables que se mostrarán como string en el circular percent progress
   String minutesStr;
   String secondsStr;
 
-  //variable para la verificación de los textFormField
+  //variables para el bucle del pomodoro
+  int bucle = 1;
+  int contadorBucle = 0;
+
+  //variables para la verificación de los textFormField
   final formKey = new GlobalKey<FormState>();
+  final formKey2 = new GlobalKey<FormState>();
+
   //variable para el sonido de la notificación
   final audioPlayer = AudioCache();
+
   //función que convierte los segundos al formato MM:SS
   String formato(int seconds) {
     seconds = (seconds % 3600).truncate();
     int minutes = (seconds / 60).truncate();
+
     minutesStr = (minutes).toString().padLeft(2, '0');
     secondsStr = (seconds % 60).toString().padLeft(2, '0');
+
     if (seconds < 1 && bandera == 1) return "Pomodoro completado";
+
     return "$minutesStr:$secondsStr";
   }
 
@@ -96,15 +107,18 @@ class _MyHomePageState extends State<MyHomePage> {
         if (_start < 1 && bandera == 0) {
           _start = min_5;
           reset_5 = 0;
-          initial_time = min_5;
+          initialTime = min_5;
           bandera++;
         } else {
           //si se acaba el tiempo de descanso, el tiempo inicial vuelve al tiempo de pomodoro y se pausa
           if (_start < 1 && bandera == 1) {
-            paused = 1;
             _start = min_25;
-            initial_time = min_25;
+            initialTime = min_25;
             bandera = 0;
+            contadorBucle++;
+            if (bucle <= contadorBucle) {
+              paused = 1;
+            }
           }
           //mientras no esté pausado los segundos van a transcurrir
           if (paused == 0) {
@@ -114,19 +128,19 @@ class _MyHomePageState extends State<MyHomePage> {
           if (reset_25 == 1) {
             _start = min_25;
             reset_25 = 0;
-            initial_time = min_25;
+            initialTime = min_25;
           }
           //si se presiona el botón de tiempo de descanso, se inicializa el tiempo con el tiempo de descanso
           if (reset_5 == 1) {
             _start = min_5;
             reset_5 = 0;
-            initial_time = min_5;
+            initialTime = min_5;
           }
           //si se presiona el botón de comenzar, se inicializa el tiempo con el tiempo de pomodoro
           if (reset == 1) {
             _start = min_25;
             reset = 0;
-            initial_time = min_25;
+            initialTime = min_25;
             paused = 0;
           }
         }
@@ -161,14 +175,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(height: 25),
-                    styleTextSimple("Pomodoro", 50),
-                    SizedBox(height: 20),
+                    SizedBox(height: 18),
+                    styleTextSimple(bandera == 0 ? "Pomodoro" : "Descanso", 50),
+                    botonNumeroDeVeces(),
+                    SizedBox(height: 10),
                     new CircularPercentIndicator(
                       radius: 330.0,
                       lineWidth: 20.0,
                       reverse: true,
-                      percent: _start / initial_time,
+                      percent: _start / initialTime,
                       center: styleTextSimple(formato(_start), 50),
                       backgroundColor: Colors.black,
                       progressColor: Colors.greenAccent,
@@ -261,8 +276,9 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               if (text == "Comenzar") {
                 _start = min_25;
-                initial_time = min_25;
+                initialTime = min_25;
                 reset = 1;
+                contadorBucle = 0;
               }
             });
           },
@@ -324,10 +340,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     keyboardType: TextInputType.number,
                                     validator: (valor) {
                                       if (valor.isEmpty)
-                                        return 'Debe ingresar datos';
+                                        return 'Debe ingresar datos.';
                                       if (int.parse(valor) > 59 ||
                                           int.parse(valor) < 0)
-                                        return 'Número no válido';
+                                        return 'Número no válido.';
                                       return null;
                                     },
                                     onSaved: (valor) =>
@@ -343,10 +359,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     keyboardType: TextInputType.number,
                                     validator: (valor) {
                                       if (valor.isEmpty)
-                                        return 'Debe ingresar datos';
+                                        return 'Debe ingresar datos.';
                                       if (int.parse(valor) > 59 ||
                                           int.parse(valor) < 0)
-                                        return 'Número no válido';
+                                        return 'Número no válido.';
                                       return null;
                                     },
                                     onSaved: (valor) =>
@@ -381,6 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         onPressed: () {
                                           if (formKey.currentState.validate()) {
                                             formKey.currentState.save();
+                                            //si el formulario es correcto configuro los tiempos dependiendo si está en descanso o no
                                             setState(() {
                                               if (!descanso) {
                                                 minutosPom = temporalMin;
@@ -389,15 +406,114 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     segundosPom;
                                                 min_25 = minutosPom * 60 +
                                                     segundosPom;
-                                                initial_time = _start;
+                                                initialTime = _start;
                                               } else if (descanso) {
                                                 minutosDes = temporalMin;
                                                 segundosDes = temporalSeg;
                                                 min_5 = minutosDes * 60 +
                                                     segundosDes;
                                                 _start = min_5;
-                                                initial_time = min_5;
+                                                initialTime = min_5;
                                               }
+                                            });
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                      ),
+                                    ])
+                              ],
+                            ),
+                          )))),
+            ));
+  }
+
+  Widget botonNumeroDeVeces() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      SizedBox(
+        width: 35,
+        height: 35,
+        child: FloatingActionButton(
+          mini: true,
+          child: Icon(
+            Icons.loop,
+            size: 25,
+          ),
+          backgroundColor: Colors.teal[700],
+          onPressed: () {
+            configurarBucle();
+          },
+        ),
+      ),
+      SizedBox(
+        width: 20,
+      ),
+      styleTextSimple("$contadorBucle",
+          25) //contador de repeticiones que empieza en 0 y va en aumento
+    ]);
+  }
+
+  void configurarBucle() {
+    int temporal;
+    paused = 1;
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(
+                'Configurar repeticiones',
+                style: GoogleFonts.sourceSerifPro(),
+              ),
+              content: SizedBox(
+                  width: 80.0,
+                  height: 120.0,
+                  child: Center(
+                      child: Form(
+                          key: formKey2,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    validator: (valor) {
+                                      if (valor.isEmpty)
+                                        return 'Debe ingresar datos.';
+                                      if (int.parse(valor) <= 0)
+                                        return 'Número no válido.';
+                                      return null;
+                                    },
+                                    onSaved: (valor) =>
+                                        temporal = int.parse(valor),
+                                    decoration: InputDecoration(
+                                        labelText: 'Repeticiones',
+                                        prefixIcon: Icon(Icons.loop_outlined)),
+                                    style: GoogleFonts.sourceSerifPro()),
+                                SizedBox(height: 20.0),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        child: Text("Cancelar",
+                                            style: GoogleFonts.sourceSerifPro(
+                                                textStyle: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold))),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                      SizedBox(width: 20.0),
+                                      TextButton(
+                                        child: Text("Aceptar",
+                                            style: GoogleFonts.sourceSerifPro(
+                                                textStyle: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold))),
+                                        onPressed: () {
+                                          if (formKey2.currentState
+                                              .validate()) {
+                                            formKey2.currentState.save();
+                                            setState(() {
+                                              bucle =
+                                                  temporal; //bucle por defecto comienza con 1 repetición, pero se puede configurar
                                             });
                                             Navigator.pop(context);
                                           }
