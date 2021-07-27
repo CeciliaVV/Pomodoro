@@ -300,6 +300,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  //función donde se puede ingresar los minutos y segundos del tiempo de pomodoro
+  //y descanso, también se validan los datos
   ingresaTiempo(BuildContext context, bool descanso) {
     paused = 1;
     showDialog(
