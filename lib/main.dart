@@ -89,9 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void notificacion() async {
-    if (_start < 1 && bandera == 0)
+    if (_start == 3 && bandera == 0)
       audioPlayer.play("11.mp3");
-    else if (_start < 1 && bandera == 1) {
+    else if (_start == 3 && bandera == 1) {
       audioPlayer.play("11.mp3");
       await Future.delayed(const Duration(seconds: 2));
       audioPlayer.play("11.mp3");
@@ -164,73 +164,76 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Center(
-          child: Container(
-              constraints: BoxConstraints.expand(),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [Colors.greenAccent, Colors.teal],
-                      begin: FractionalOffset(0.25, 1))),
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 18),
-                    styleTextSimple(bandera == 0 ? "Pomodoro" : "Descanso", 50),
-                    botonNumeroDeVeces(),
-                    SizedBox(height: 10),
-                    new CircularPercentIndicator(
-                      radius: 330.0,
-                      lineWidth: 20.0,
-                      reverse: true,
-                      percent: _start / initialTime,
-                      center: styleTextSimple(formato(_start), 50),
-                      backgroundColor: Colors.black,
-                      progressColor: Colors.greenAccent,
-                    ),
-                    Spacer(),
-                    SizedBox(height: 5),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            flex: 10,
-                            child: button("Comenzar", reset, 140, 60, 25),
-                          ),
-                          Expanded(
-                            flex: 10,
-                            child: button("Pausa", paused, 140, 60, 25),
-                          )
-                        ]),
-                    SizedBox(height: 30),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          styleTextSimple("Tiempo de pomodoro:", 20),
-                          styleTextSimple("Tiempo de descanso:", 20),
-                        ]),
-                    SizedBox(height: 15),
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            flex: 10,
-                            child: button("$minutosPom Min $segundosPom Seg",
-                                reset_25, 140, 60, 25),
-                          ),
-                          Expanded(
-                            flex: 10,
-                            child: button("$minutosDes Min $segundosDes Seg",
-                                reset_5, 140, 60, 25),
-                          )
-                        ]),
-                    Spacer(),
-                  ],
-                ),
-              ))),
+      body: SafeArea(
+        child: Center(
+            child: Container(
+                constraints: BoxConstraints.expand(),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [Colors.greenAccent, Colors.teal],
+                        begin: FractionalOffset(0.25, 1))),
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      //SizedBox(height: 5),
+                      styleTextSimple(
+                          bandera == 0 ? "Pomodoro" : "Descanso", 50),
+                      botonNumeroDeVeces(),
+                      SizedBox(height: 10),
+                      new CircularPercentIndicator(
+                        radius: 330.0,
+                        lineWidth: 20.0,
+                        reverse: true,
+                        percent: _start / initialTime,
+                        center: styleTextSimple(formato(_start), 50),
+                        backgroundColor: Colors.black,
+                        progressColor: Colors.greenAccent,
+                      ),
+                      Spacer(),
+                      SizedBox(height: 5),
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 10,
+                              child: button("Comenzar", reset, 140, 60, 25),
+                            ),
+                            Expanded(
+                              flex: 10,
+                              child: button("Pausa", paused, 140, 60, 25),
+                            )
+                          ]),
+                      SizedBox(height: 30),
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            styleTextSimple("Tiempo de pomodoro:", 20),
+                            styleTextSimple("Tiempo de descanso:", 20),
+                          ]),
+                      SizedBox(height: 15),
+                      Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 10,
+                              child: button("$minutosPom Min $segundosPom Seg",
+                                  reset_25, 140, 60, 25),
+                            ),
+                            Expanded(
+                              flex: 10,
+                              child: button("$minutosDes Min $segundosDes Seg",
+                                  reset_5, 140, 60, 25),
+                            )
+                          ]),
+                      Spacer(),
+                    ],
+                  ),
+                ))),
+      ),
     );
   }
 
