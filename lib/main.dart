@@ -116,6 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _start = min_25;
             initialTime = min_25;
             bandera = 0;
+            activo = false;
             contadorBucle++;
             if (bucle <= contadorBucle) {
               paused = 1;
@@ -178,10 +179,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      //SizedBox(height: 5),
-                      styleTextSimple(
-                          bandera == 0 ? "Pomodoro" : "Descanso", 50),
-                      botonNumeroDeVeces(),
+                      Row(crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(width: 130),
+                            styleTextSimple(
+                                bandera == 0 ? "Pomodoro" : "Descanso", 50),
+                            SizedBox(width: 70),
+                            configuraciones()
+                          ]),
                       SizedBox(height: 10),
                       new CircularPercentIndicator(
                         radius: 330.0,
@@ -440,8 +446,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 segundosDes = temporalSeg;
                                                 min_5 = minutosDes * 60 +
                                                     segundosDes;
-                                                _start = min_5;
-                                                initialTime = min_5;
+                                                _start = minutosPom * 60 +
+                                                    segundosPom;
+                                                initialTime = _start;
                                               }
                                             });
                                             Navigator.pop(context);
@@ -455,7 +462,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ));
   }
 
-  Widget botonNumeroDeVeces() {
+  Widget configuraciones() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       SizedBox(
         width: 35,
@@ -463,8 +470,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: FloatingActionButton(
           mini: true,
           child: Icon(
-            Icons.loop,
-            size: 25,
+            Icons.settings,
+            size: 23,
           ),
           backgroundColor: Colors.teal[700],
           onPressed: () {
@@ -472,11 +479,11 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
-      SizedBox(
+      /*SizedBox(
         width: 20,
       ),
       styleTextSimple("$contadorBucle",
-          25) //contador de repeticiones que empieza en 0 y va en aumento
+          25)*/ //contador de repeticiones que empieza en 0 y va en aumento
     ]);
   }
 
