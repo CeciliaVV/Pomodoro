@@ -32,6 +32,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Timer _timer;
 
+  bool activo = false;
   //variables temporales que se capturan en el showDialog y se muestran en los botones
   int minutosPom = 25; //minutos del tiempo de pomodoro
   int segundosPom = 0; //segundos del tiempo de pomodoro
@@ -139,9 +140,10 @@ class _MyHomePageState extends State<MyHomePage> {
           //si se presiona el botón de comenzar, se inicializa el tiempo con el tiempo de pomodoro
           if (reset == 1) {
             _start = min_25;
-            reset = 0;
             initialTime = min_25;
+            reset = 0;
             paused = 0;
+            activo = true;
           }
         }
       });
@@ -196,14 +198,30 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            Expanded(
-                              flex: 10,
-                              child: button("Comenzar", reset, 140, 60, 25),
-                            ),
-                            Expanded(
-                              flex: 10,
-                              child: button("Pausa", paused, 140, 60, 25),
-                            )
+                            !activo
+                                ? Expanded(
+                                    flex: 10,
+                                    child:
+                                        button("Comenzar", reset, 140, 60, 25),
+                                  )
+                                : paused == 0
+                                    ? Expanded(
+                                        flex: 10,
+                                        child: button(
+                                            "Pausa", paused, 140, 60, 25),
+                                      )
+                                    : Expanded(
+                                        flex: 10,
+                                        child: button(
+                                            "Continuar", paused, 140, 60, 25),
+                                      ),
+                            activo
+                                ? Expanded(
+                                    flex: 10,
+                                    child:
+                                        button("Detener", reset, 140, 60, 25),
+                                  )
+                                : Container(),
                           ]),
                       SizedBox(height: 30),
                       Row(
@@ -262,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             setState(() {
               //si está presionado y aprieto el botón deja de estar en estado presionado y viceversa
-              if (text == "Pausa") {
+              if (text == "Pausa" || text == "Continuar") {
                 if (paused == 1)
                   paused = 0;
                 else
@@ -282,6 +300,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialTime = min_25;
                 reset = 1;
                 contadorBucle = 0;
+              }
+              if (text == "Detener") {
+                activo = false;
+                _start = min_25;
+                initialTime = min_25;
+                contadorBucle = 0;
+                paused = 1;
               }
             });
           },
@@ -306,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               //Solo se cambia el estado del botón pausa porque es el único que puede estar presionado por
               //un largo tiempo, los demás botones cambian de estado inmediatamente después de ser presionados.
-              if (text == "Pausa") {
+              if (text == "Pausa" || text == "Continuar") {
                 if (paused == 1)
                   paused = 0;
                 else
