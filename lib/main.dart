@@ -53,8 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //variables temporales
   int valor;
-  int temporalMin;
-  int temporalSeg;
+  int temporalMinPom;
+  int temporalSegPom;
+  int temporalMinDes;
+  int temporalSegDes;
 
   //variable que permitirá que el tiempo de descanso inicie inmediatamente
   //después del tiempo de pomodoro
@@ -116,9 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
             _start = min_25;
             initialTime = min_25;
             bandera = 0;
-            activo = false;
             contadorBucle++;
             if (bucle <= contadorBucle) {
+              activo = false;
               paused = 1;
             }
           }
@@ -178,7 +180,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      SizedBox(height: 20),
                       Row(crossAxisAlignment: CrossAxisAlignment.center,
                           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -188,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(width: 70),
                             configuraciones()
                           ]),
-                      SizedBox(height: 10),
+                      SizedBox(height: 40),
                       new CircularPercentIndicator(
                         radius: 330.0,
                         lineWidth: 20.0,
@@ -230,15 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 : Container(),
                           ]),
                       SizedBox(height: 30),
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            styleTextSimple("Tiempo de pomodoro:", 20),
-                            styleTextSimple("Tiempo de descanso:", 20),
-                          ]),
-                      SizedBox(height: 15),
-                      Row(
+                      /*Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
@@ -252,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: button("$minutosDes Min $segundosDes Seg",
                                   reset_5, 140, 60, 25),
                             )
-                          ]),
+                          ]),*/
                       Spacer(),
                     ],
                   ),
@@ -292,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 else
                   paused = 1;
               }
-              if (text == "$minutosPom Min $segundosPom Seg") {
+              /*if (text == "$minutosPom Min $segundosPom Seg") {
                 //Función que retorna un showDialog para ingresar los minutos y segundos.
                 //El segundo parámetro indica si se ingresa el tiempo de descanso o no.
                 ingresaTiempo(context, false);
@@ -300,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
               } else if (text == "$minutosDes Min $segundosDes Seg") {
                 ingresaTiempo(context, true);
                 reset_5 = 1;
-              }
+              }*/
               if (text == "Comenzar") {
                 _start = min_25;
                 initialTime = min_25;
@@ -352,7 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //función donde se puede ingresar los minutos y segundos del tiempo de pomodoro
   //y descanso, también se validan los datos
-  ingresaTiempo(BuildContext context, bool descanso) {
+  /*ingresaTiempo(BuildContext context, bool descanso) {
     paused = 1;
     showDialog(
         context: context,
@@ -381,7 +377,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       return null;
                                     },
                                     onSaved: (valor) =>
-                                        temporalMin = int.parse(valor),
+                                        temporalMinPom = int.parse(valor),
                                     decoration: InputDecoration(
                                         labelText: 'Minutos',
                                         prefixIcon: descanso
@@ -400,7 +396,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       return null;
                                     },
                                     onSaved: (valor) =>
-                                        temporalSeg = int.parse(valor),
+                                        temporalSegPom = int.parse(valor),
                                     decoration: InputDecoration(
                                         labelText: 'Segundos',
                                         prefixIcon: descanso
@@ -460,7 +456,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           )))),
             ));
-  }
+  }*/
 
   Widget configuraciones() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -476,6 +472,7 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Colors.teal[700],
           onPressed: () {
             configurarBucle();
+            reset_25 = 1;
           },
         ),
       ),
@@ -494,18 +491,89 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) => AlertDialog(
               title: Text(
-                'Configurar repeticiones',
+                'Configuraciones',
                 style: GoogleFonts.sourceSerifPro(),
               ),
               content: SizedBox(
-                  width: 80.0,
-                  height: 120.0,
+                  width: 100.0,
+                  height: 300.0,
                   child: Center(
                       child: Form(
                           key: formKey2,
                           child: SingleChildScrollView(
                             child: Column(
                               children: <Widget>[
+                                styleTextSimple("Tiempo de pomodoro: ", 18),
+                                TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    validator: (valor) {
+                                      if (valor.isEmpty)
+                                        return 'Debe ingresar datos.';
+                                      if (int.parse(valor) > 59 ||
+                                          int.parse(valor) < 0)
+                                        return 'Número no válido.';
+                                      return null;
+                                    },
+                                    onSaved: (valor) =>
+                                        temporalMinPom = int.parse(valor),
+                                    decoration: InputDecoration(
+                                        labelText: 'Minutos',
+                                        prefixIcon: Icon(Icons.alarm)),
+                                    style: GoogleFonts.sourceSerifPro()),
+                                SizedBox(height: 15.0),
+                                TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    validator: (valor) {
+                                      if (valor.isEmpty)
+                                        return 'Debe ingresar datos.';
+                                      if (int.parse(valor) > 59 ||
+                                          int.parse(valor) < 0)
+                                        return 'Número no válido.';
+                                      return null;
+                                    },
+                                    onSaved: (valor) =>
+                                        temporalSegPom = int.parse(valor),
+                                    decoration: InputDecoration(
+                                        labelText: 'Segundos',
+                                        prefixIcon: Icon(Icons.alarm)),
+                                    style: GoogleFonts.sourceSerifPro()),
+                                SizedBox(height: 20.0),
+                                styleTextSimple("Tiempo de descanso: ", 18),
+                                TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    validator: (valor) {
+                                      if (valor.isEmpty)
+                                        return 'Debe ingresar datos.';
+                                      if (int.parse(valor) > 59 ||
+                                          int.parse(valor) < 0)
+                                        return 'Número no válido.';
+                                      return null;
+                                    },
+                                    onSaved: (valor) =>
+                                        temporalMinDes = int.parse(valor),
+                                    decoration: InputDecoration(
+                                        labelText: 'Minutos',
+                                        prefixIcon: Icon(Icons.pan_tool)),
+                                    style: GoogleFonts.sourceSerifPro()),
+                                SizedBox(height: 15.0),
+                                TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    validator: (valor) {
+                                      if (valor.isEmpty)
+                                        return 'Debe ingresar datos.';
+                                      if (int.parse(valor) > 59 ||
+                                          int.parse(valor) < 0)
+                                        return 'Número no válido.';
+                                      return null;
+                                    },
+                                    onSaved: (valor) =>
+                                        temporalSegDes = int.parse(valor),
+                                    decoration: InputDecoration(
+                                        labelText: 'Segundos',
+                                        prefixIcon: Icon(Icons.pan_tool)),
+                                    style: GoogleFonts.sourceSerifPro()),
+                                SizedBox(height: 20.0),
+                                styleTextSimple("Repeticiones: ", 18),
                                 TextFormField(
                                     keyboardType: TextInputType.number,
                                     validator: (valor) {
@@ -549,6 +617,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                             setState(() {
                                               bucle =
                                                   temporal; //bucle por defecto comienza con 1 repetición, pero se puede configurar
+
+                                              minutosPom = temporalMinPom;
+                                              segundosPom = temporalSegPom;
+                                              min_25 =
+                                                  minutosPom * 60 + segundosPom;
+
+                                              minutosDes = temporalMinDes;
+                                              segundosDes = temporalSegDes;
+                                              min_5 =
+                                                  minutosDes * 60 + segundosDes;
+
+                                              _start =
+                                                  minutosPom * 60 + segundosPom;
+                                              initialTime = _start;
                                             });
                                             Navigator.pop(context);
                                           }
