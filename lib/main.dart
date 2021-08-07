@@ -4,8 +4,12 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:pomodoro/src/pages/style_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(MyApp());
 }
 
@@ -121,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
               content: Text(
                 "Se ha realizado $contadorBucle pomodoro(s) completo(s).",
               ),
-              backgroundColor: Colors.teal,
+              backgroundColor: Colors.teal[900],
             );
             ScaffoldMessenger.of(context).showSnackBar(snackbar);
             if (bucle <= contadorBucle) {
