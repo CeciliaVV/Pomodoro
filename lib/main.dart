@@ -55,13 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int reset_25 = 0; //botón del tiempo de pomodoro
   int reset = 0; //botón del tiempp de descanso
 
-  //variables temporales
-  int valor;
-  int temporalMinPom;
-  int temporalSegPom;
-  int temporalMinDes;
-  int temporalSegDes;
-
   //variable que permitirá que el tiempo de descanso inicie inmediatamente
   //después del tiempo de pomodoro
   //0 mientras transcurra el tiempo de pomodoro y 1 mientras transcurra el tiempo de descanso
@@ -178,7 +171,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      extendBody: true,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.teal,
@@ -287,12 +279,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   paused = 1;
               }
               if (text == "Comenzar") {
+                bandera = 0;
                 _start = min_25;
                 initialTime = min_25;
                 reset = 1;
                 contadorBucle = 0;
               }
               if (text == "Detener") {
+                bandera = 0;
                 activo = false;
                 _start = min_25;
                 initialTime = min_25;
@@ -337,6 +331,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void configurarBucle() {
     int temporal;
+    int temporalMinPom;
+    int temporalSegPom;
+    int temporalMinDes;
+    int temporalSegDes;
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -356,6 +354,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 styleTextSimple("Tiempo de pomodoro: ", 18),
                                 TextFormField(
                                     keyboardType: TextInputType.number,
+                                    initialValue: "$minutosPom",
                                     validator: (valor) {
                                       if (valor.isEmpty)
                                         return 'Debe ingresar datos.';
@@ -373,6 +372,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 SizedBox(height: 15.0),
                                 TextFormField(
                                     keyboardType: TextInputType.number,
+                                    initialValue: "$segundosPom",
                                     validator: (valor) {
                                       if (valor.isEmpty)
                                         return 'Debe ingresar datos.';
@@ -391,6 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 styleTextSimple("Tiempo de descanso: ", 18),
                                 TextFormField(
                                     keyboardType: TextInputType.number,
+                                    initialValue: "$minutosDes",
                                     validator: (valor) {
                                       if (valor.isEmpty)
                                         return 'Debe ingresar datos.';
@@ -408,6 +409,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 SizedBox(height: 15.0),
                                 TextFormField(
                                     keyboardType: TextInputType.number,
+                                    initialValue: "$segundosDes",
                                     validator: (valor) {
                                       if (valor.isEmpty)
                                         return 'Debe ingresar datos.';
@@ -426,6 +428,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 styleTextSimple("Repeticiones: ", 18),
                                 TextFormField(
                                     keyboardType: TextInputType.number,
+                                    initialValue: "$bucle",
                                     validator: (valor) {
                                       if (valor.isEmpty)
                                         return 'Debe ingresar datos.';
@@ -480,6 +483,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                               _start =
                                                   minutosPom * 60 + segundosPom;
                                               initialTime = _start;
+
+                                              bandera = 0;
+                                              activo = false;
+                                              _start = min_25;
+                                              initialTime = min_25;
+                                              contadorBucle = 0;
+                                              paused = 1;
                                             });
                                             Navigator.pop(context);
                                           }
