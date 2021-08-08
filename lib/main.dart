@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:pomodoro/src/pages/style_page.dart';
@@ -72,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final formKey = new GlobalKey<FormState>();
   //variable para el sonido de la notificación
   final audioPlayer = AudioCache();
+  ScrollController scrollcontroller = ScrollController();
 
   //función que convierte los segundos al formato MM:SS
   String formato(int seconds) {
@@ -343,34 +345,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: GoogleFonts.sourceSerifPro(),
               ),
               content: SizedBox(
-                  width: 100.0,
-                  height: 300.0,
-                  child: Center(
-                      child: Form(
-                          key: formKey,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: <Widget>[
-                                styleTextSimple("Tiempo de pomodoro: ", 18),
-                                TextFormField(
-                                    keyboardType: TextInputType.number,
-                                    initialValue: "$minutosPom",
-                                    validator: (valor) {
-                                      if (valor.isEmpty)
-                                        return 'Debe ingresar datos.';
-                                      if (int.parse(valor) > 59 ||
-                                          int.parse(valor) < 0)
-                                        return 'Número no válido.';
-                                      return null;
-                                    },
-                                    onSaved: (valor) =>
-                                        temporalMinPom = int.parse(valor),
-                                    decoration: InputDecoration(
-                                        labelText: 'Minutos',
-                                        prefixIcon: Icon(Icons.alarm)),
-                                    style: GoogleFonts.sourceSerifPro()),
-                                SizedBox(height: 15.0),
-                                TextFormField(
+                width: 100.0,
+                height: 300.0,
+                child: Center(
+                  child: Scrollbar(
+                    isAlwaysShown: true,
+                    controller: scrollcontroller,
+                    radius: Radius.zero,
+                    thickness: 5,
+                    hoverThickness: 5,
+                    child: Form(
+                        key: formKey,
+                        child: SingleChildScrollView(
+                          controller: scrollcontroller,
+                          child: Column(
+                            children: <Widget>[
+                              styleTextSimple("Tiempo de pomodoro: ", 18),
+                              SizedBox(
+                                  width: 210.0,
+                                  height: 60.0,
+                                  child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      initialValue: "$minutosPom",
+                                      validator: (valor) {
+                                        if (valor.isEmpty)
+                                          return 'Debe ingresar datos.';
+                                        if (int.parse(valor) > 59 ||
+                                            int.parse(valor) < 0)
+                                          return 'Número no válido.';
+                                        return null;
+                                      },
+                                      onSaved: (valor) =>
+                                          temporalMinPom = int.parse(valor),
+                                      decoration: InputDecoration(
+                                          labelText: 'Minutos',
+                                          prefixIcon: Icon(Icons.alarm)),
+                                      style: GoogleFonts.sourceSerifPro())),
+                              SizedBox(height: 15.0),
+                              SizedBox(
+                                width: 210.0,
+                                height: 60.0,
+                                child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     initialValue: "$segundosPom",
                                     validator: (valor) {
@@ -387,9 +402,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                         labelText: 'Segundos',
                                         prefixIcon: Icon(Icons.alarm)),
                                     style: GoogleFonts.sourceSerifPro()),
-                                SizedBox(height: 20.0),
-                                styleTextSimple("Tiempo de descanso: ", 18),
-                                TextFormField(
+                              ),
+                              SizedBox(height: 20.0),
+                              styleTextSimple("Tiempo de descanso: ", 18),
+                              SizedBox(
+                                width: 210.0,
+                                height: 60.0,
+                                child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     initialValue: "$minutosDes",
                                     validator: (valor) {
@@ -406,8 +425,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                         labelText: 'Minutos',
                                         prefixIcon: Icon(Icons.pan_tool)),
                                     style: GoogleFonts.sourceSerifPro()),
-                                SizedBox(height: 15.0),
-                                TextFormField(
+                              ),
+                              SizedBox(height: 15.0),
+                              SizedBox(
+                                width: 210.0,
+                                height: 60.0,
+                                child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     initialValue: "$segundosDes",
                                     validator: (valor) {
@@ -424,9 +447,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                         labelText: 'Segundos',
                                         prefixIcon: Icon(Icons.pan_tool)),
                                     style: GoogleFonts.sourceSerifPro()),
-                                SizedBox(height: 20.0),
-                                styleTextSimple("Repeticiones: ", 18),
-                                TextFormField(
+                              ),
+                              SizedBox(height: 20.0),
+                              styleTextSimple("Repeticiones: ", 18),
+                              SizedBox(
+                                width: 210.0,
+                                height: 60.0,
+                                child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     initialValue: "$bucle",
                                     validator: (valor) {
@@ -442,63 +469,68 @@ class _MyHomePageState extends State<MyHomePage> {
                                         labelText: 'Repeticiones',
                                         prefixIcon: Icon(Icons.loop_outlined)),
                                     style: GoogleFonts.sourceSerifPro()),
-                                SizedBox(height: 20.0),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        child: Text("Cancelar",
-                                            style: GoogleFonts.sourceSerifPro(
-                                                textStyle: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold))),
-                                        onPressed: () {
+                              ),
+                              SizedBox(height: 20.0),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      child: Text("Cancelar",
+                                          style: GoogleFonts.sourceSerifPro(
+                                              textStyle: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15))),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    SizedBox(width: 20.0),
+                                    TextButton(
+                                      child: Text("Aceptar",
+                                          style: GoogleFonts.sourceSerifPro(
+                                              textStyle: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15))),
+                                      onPressed: () {
+                                        if (formKey.currentState.validate()) {
+                                          formKey.currentState.save();
+                                          setState(() {
+                                            bucle =
+                                                temporal; //bucle por defecto comienza con 1 repetición, pero se puede configurar
+
+                                            minutosPom = temporalMinPom;
+                                            segundosPom = temporalSegPom;
+                                            min_25 =
+                                                minutosPom * 60 + segundosPom;
+
+                                            minutosDes = temporalMinDes;
+                                            segundosDes = temporalSegDes;
+                                            min_5 =
+                                                minutosDes * 60 + segundosDes;
+
+                                            _start =
+                                                minutosPom * 60 + segundosPom;
+                                            initialTime = _start;
+
+                                            bandera = 0;
+                                            activo = false;
+                                            _start = min_25;
+                                            initialTime = min_25;
+                                            contadorBucle = 0;
+                                            paused = 1;
+                                          });
                                           Navigator.pop(context);
-                                        },
-                                      ),
-                                      SizedBox(width: 20.0),
-                                      TextButton(
-                                        child: Text("Aceptar",
-                                            style: GoogleFonts.sourceSerifPro(
-                                                textStyle: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold))),
-                                        onPressed: () {
-                                          if (formKey.currentState.validate()) {
-                                            formKey.currentState.save();
-                                            setState(() {
-                                              bucle =
-                                                  temporal; //bucle por defecto comienza con 1 repetición, pero se puede configurar
-
-                                              minutosPom = temporalMinPom;
-                                              segundosPom = temporalSegPom;
-                                              min_25 =
-                                                  minutosPom * 60 + segundosPom;
-
-                                              minutosDes = temporalMinDes;
-                                              segundosDes = temporalSegDes;
-                                              min_5 =
-                                                  minutosDes * 60 + segundosDes;
-
-                                              _start =
-                                                  minutosPom * 60 + segundosPom;
-                                              initialTime = _start;
-
-                                              bandera = 0;
-                                              activo = false;
-                                              _start = min_25;
-                                              initialTime = min_25;
-                                              contadorBucle = 0;
-                                              paused = 1;
-                                            });
-                                            Navigator.pop(context);
-                                          }
-                                        },
-                                      ),
-                                    ])
-                              ],
-                            ),
-                          )))),
+                                        }
+                                      },
+                                    ),
+                                    SizedBox(width: 13.0),
+                                  ])
+                            ],
+                          ),
+                        )),
+                  ),
+                ),
+              ),
             ));
   }
 }
